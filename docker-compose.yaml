@@ -1,0 +1,27 @@
+services:
+  grafana:
+    extends:
+      file: .config/docker-compose-base.yaml
+      service: grafana
+  oracle:
+    image: gvenzl/oracle-free:latest
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: password
+    # Customize healthcheck script options for startup
+    healthcheck:
+      test: ["CMD", "healthcheck.sh"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 5s
+      start_interval: 5s
+    # Mount a local SQL file to initialize your schema at startup
+    hostname: oracle
+    volumes:
+      - oracle:/opt/oracle/oradata
+volumes:
+  postgres:
+  valkey:
+  oracle:
