@@ -3,6 +3,7 @@ import { DataQuery } from '@grafana/schema';
 
 export interface Query extends DataQuery {
   sql?: string;
+  timezone?: string;
 }
 
 export const DEFAULT_QUERY: Partial<Query> = {};
@@ -28,6 +29,7 @@ export interface DataSourceOptions extends DataSourceJsonData {
   maxIdleConns: number;
   maxIdleTime: string;
   maxLifeTime: string;
+  timezone: string;
 }
 
 /**

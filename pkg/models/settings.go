@@ -11,6 +11,7 @@ import (
 type PluginSettings struct {
 	User         string                `json:"user"`
 	Hostname     string                `json:"hostname"`
+	TimeZone     string                `json:"timezone"`
 	Port         int                   `json:"port"`
 	Service      string                `json:"service"`
 	Secrets      *SecretPluginSettings `json:"-"`

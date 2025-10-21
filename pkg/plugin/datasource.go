@@ -83,11 +83,17 @@ func (d *Datasource) concurrentQuery(ctx context.Context, query concurrent.Query
 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("json unmarshal: %v", err.Error()))
 	}
 
-	// create data frame response.
-	// For an overview on data frames and how grafana handles them:
-	// https://grafana.com/developers/plugin-tools/introduction/data-frames
+	connection, err := d.db.Conn(ctx)
+	if err != nil {
+		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error: %v", err.Error()))
+	}
 
-	rows, err := d.db.Query(dsQuery.SQL)
+	_, err = connection.ExecContext(ctx, fmt.Sprintf("alter session set time_zone='%s'", d.settings.TimeZone))
+	if err != nil {
+		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error: %v", err.Error()))
+	}
+
+	rows, err := connection.QueryContext(ctx, dsQuery.SQL)
 	if err != nil {
 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error: %v", err.Error()))
 	}
@@ -98,6 +104,8 @@ func (d *Datasource) concurrentQuery(ctx context.Context, query concurrent.Query
 	}
 
 	frame := data.NewFrame(query.DataQuery.RefID)
+
+	log.DefaultLogger.Info(fmt.Sprintf("from: %+v", query))
 
 	var values []any
 	for _, column := range columnTypes {
