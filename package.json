@@ -1,6 +1,6 @@
 {
   "name": "oracle-datasource",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "scripts": {
     "build": "webpack -c ./.config/webpack/webpack.config.ts --env production",
     "dev": "webpack -w -c ./.config/webpack/webpack.config.ts --env development",
@@ -71,7 +71,6 @@
     "@grafana/runtime": "^12.2.0",
     "@grafana/schema": "^12.2.0",
     "@grafana/ui": "^12.2.0",
-    "codemirror": "^6.0.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
