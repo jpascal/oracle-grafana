@@ -1,8 +1,7 @@
 import React, { ChangeEvent } from 'react';
-import { InlineField, Input, Legend, SecretInput, TimeZonePicker } from '@grafana/ui';
+import { InlineField, Input, Legend, SecretInput } from '@grafana/ui';
 import { DataSourcePluginOptionsEditorProps } from '@grafana/data';
 import { DataSourceOptions, SecureJsonData } from '../types';
-import { TimeZone } from '@grafana/schema';
 
 interface Props extends DataSourcePluginOptionsEditorProps<DataSourceOptions> {}
 
@@ -51,15 +50,6 @@ export function ConfigEditor(props: Props) {
       },
     });
   };
-  const onChangeTimeZone = (timezone?: TimeZone) => {
-    onOptionsChange({
-      ...options,
-      jsonData: {
-        ...options.jsonData,
-        timezone: timezone || "",
-      },
-    });
-  }
 
   const { jsonData, secureJsonFields } = options;
   const secureJsonData = (options.secureJsonData || {}) as SecureJsonData;
@@ -79,9 +69,6 @@ export function ConfigEditor(props: Props) {
           onChange={onPasswordChange}
           onReset={onPasswordReset}
         />
-      </InlineField>
-      <InlineField grow label="TimeZone" labelWidth={20}>
-        <TimeZonePicker value={jsonData.timezone} onChange={onChangeTimeZone} width={50} />
       </InlineField>
       <Legend>Connection</Legend>
       <InlineField grow label="Hostname" labelWidth={20}>

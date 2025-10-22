@@ -5,6 +5,7 @@ go 1.24.6
 toolchain go1.24.8
 
 require (
+	github.com/creasty/defaults v1.8.0
 	github.com/grafana/grafana-plugin-sdk-go v0.280.0
 	github.com/sijms/go-ora/v2 v2.9.0
 )

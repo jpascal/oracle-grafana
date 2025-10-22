@@ -5,13 +5,13 @@ import (
 	"errors"
 	"time"
 
+	"github.com/creasty/defaults"
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
 )
 
 type PluginSettings struct {
 	User         string                `json:"user"`
 	Hostname     string                `json:"hostname"`
-	TimeZone     string                `json:"timezone"`
 	Port         int                   `json:"port"`
 	Service      string                `json:"service"`
 	Secrets      *SecretPluginSettings `json:"-"`
@@ -21,12 +21,23 @@ type PluginSettings struct {
 	MaxLifeTime  Duration              `json:"maxLifeTime"`
 }
 
+func (s *PluginSettings) SetDefaults() {
+	s.MaxIdleConns = 2
+	s.MaxOpenConns = 10
+	s.MaxIdleTime.Duration = 1 * time.Minute
+	s.MaxLifeTime.Duration = 5 * time.Minute
+}
+
 type SecretPluginSettings struct {
 	Password string `json:"password"`
 }
 
 func LoadPluginSettings(source backend.DataSourceInstanceSettings) (*PluginSettings, error) {
 	settings := PluginSettings{}
+	if err := defaults.Set(&settings); err != nil {
+		return nil, err
+	}
+
 	err := json.Unmarshal(source.JSONData, &settings)
 	if err != nil {
 		return nil, err

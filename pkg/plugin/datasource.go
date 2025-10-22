@@ -7,6 +7,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -84,16 +86,24 @@ func (d *Datasource) concurrentQuery(ctx context.Context, query concurrent.Query
 	}
 
 	connection, err := d.db.Conn(ctx)
-	if err != nil {
-		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error: %v", err.Error()))
+	defer func() {
+		_ = connection.Close()
+	}()
+
+	queries := slices.DeleteFunc(strings.Split(dsQuery.SQL, ";"), func(s string) bool {
+		return len(s) == 0
+	})
+
+	if len(queries) > 1 {
+		for index, query := range queries[:1] {
+			_, err = connection.ExecContext(ctx, fmt.Sprintf(query))
+			if err != nil {
+				return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error(query: %d): %v", index, err.Error()))
+			}
+		}
 	}
 
-	_, err = connection.ExecContext(ctx, fmt.Sprintf("alter session set time_zone='%s'", d.settings.TimeZone))
-	if err != nil {
-		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error: %v", err.Error()))
-	}
-
-	rows, err := connection.QueryContext(ctx, dsQuery.SQL)
+	rows, err := connection.QueryContext(ctx, queries[len(queries)-1])
 	if err != nil {
 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error: %v", err.Error()))
 	}
