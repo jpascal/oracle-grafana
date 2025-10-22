@@ -96,7 +96,7 @@ func (d *Datasource) concurrentQuery(ctx context.Context, query concurrent.Query
 
 	if len(queries) > 1 {
 		for index, query := range queries[:1] {
-			_, err = connection.ExecContext(ctx, fmt.Sprintf(query))
+			_, err = connection.ExecContext(ctx, query)
 			if err != nil {
 				return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error(query: %d): %v", index, err.Error()))
 			}
