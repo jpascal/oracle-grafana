@@ -31,8 +31,9 @@ export function QueryEditor({ query, onChange }: Props) {
             onChange={onSQLChange}
             width="100$"
             value={query.sql || ''}
-            height={100}
+            height={300}
             showLineNumbers
+            showMiniMap={false}
             monacoOptions={{
               tabSize: 2,
             }}

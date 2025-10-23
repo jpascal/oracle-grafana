@@ -7,8 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"reflect"
-	"slices"
-	"strings"
 	"time"
 
 	"github.com/grafana/grafana-plugin-sdk-go/backend"
@@ -85,25 +83,7 @@ func (d *Datasource) concurrentQuery(ctx context.Context, query concurrent.Query
 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("json unmarshal: %v", err.Error()))
 	}
 
-	connection, err := d.db.Conn(ctx)
-	defer func() {
-		_ = connection.Close()
-	}()
-
-	queries := slices.DeleteFunc(strings.Split(dsQuery.SQL, ";"), func(s string) bool {
-		return len(s) == 0
-	})
-
-	if len(queries) > 1 {
-		for index, query := range queries[:1] {
-			_, err = connection.ExecContext(ctx, query)
-			if err != nil {
-				return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error(query: %d): %v", index, err.Error()))
-			}
-		}
-	}
-
-	rows, err := connection.QueryContext(ctx, queries[len(queries)-1])
+	rows, err := d.db.QueryContext(ctx, dsQuery.SQL)
 	if err != nil {
 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error: %v", err.Error()))
 	}
