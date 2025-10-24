@@ -19,6 +19,7 @@ type PluginSettings struct {
 	MaxIdleConns int                   `json:"maxIdleConns"`
 	MaxIdleTime  Duration              `json:"maxIdleTime"`
 	MaxLifeTime  Duration              `json:"maxLifeTime"`
+	Timeout      Duration              `json:"timeout"`
 }
 
 func (s *PluginSettings) SetDefaults() {
@@ -26,6 +27,7 @@ func (s *PluginSettings) SetDefaults() {
 	s.MaxOpenConns = 10
 	s.MaxIdleTime.Duration = 1 * time.Minute
 	s.MaxLifeTime.Duration = 5 * time.Minute
+	s.Timeout.Duration = time.Minute
 }
 
 type SecretPluginSettings struct {

@@ -92,6 +92,9 @@ export function ConfigEditor(props: Props) {
       <InlineField grow label="Max life time" labelWidth={20}>
         <Input placeholder="5m" value={jsonData.maxLifeTime} width={50} onChange={onChangeString('maxLifeTime')} />
       </InlineField>
+      <InlineField grow label="Timeout" labelWidth={20}>
+        <Input placeholder="30s" value={jsonData.timeout} width={50} onChange={onChangeString('timeout')} />
+      </InlineField>
     </>
   );
 }

@@ -29,7 +29,7 @@ export function QueryEditor({ query, onChange }: Props) {
           <CodeEditor
             language="sql"
             onChange={onSQLChange}
-            width="100$"
+            width="100%"
             value={query.sql || ''}
             height={300}
             showLineNumbers

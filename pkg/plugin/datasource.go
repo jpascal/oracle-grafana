@@ -83,7 +83,9 @@ func (d *Datasource) concurrentQuery(ctx context.Context, query concurrent.Query
 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("json unmarshal: %v", err.Error()))
 	}
 
-	rows, err := d.db.QueryContext(ctx, dsQuery.SQL)
+	queryContext, _ := context.WithTimeoutCause(ctx, d.settings.Timeout.Duration, fmt.Errorf("query timeout limit"))
+
+	rows, err := d.db.QueryContext(queryContext, dsQuery.SQL)
 	if err != nil {
 		return backend.ErrDataResponse(backend.StatusBadRequest, fmt.Sprintf("Error: %v", err.Error()))
 	}

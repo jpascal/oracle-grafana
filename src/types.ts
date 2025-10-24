@@ -29,6 +29,7 @@ export interface DataSourceOptions extends DataSourceJsonData {
   maxIdleConns: number;
   maxIdleTime: string;
   maxLifeTime: string;
+  timeout: string;
   timezone: string;
 }
 
